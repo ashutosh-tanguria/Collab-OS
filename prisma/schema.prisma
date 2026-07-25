@@ -23,6 +23,7 @@ model User {
   updatedAt       DateTime @updatedAt
 
   memberships WorkspaceMember[]
+  ownedWorkspaces Workspace[] @relation("WorkspaceOwner")
   sessions    Session[]
   accounts    Account[]
 
@@ -30,14 +31,19 @@ model User {
 }
 
 model Workspace {
-  id        String   @id @default(cuid())
-  name      String
-  slug      String   @unique
-  logo      String?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id          String   @id @default(cuid())
+  name        String
+  slug        String   @unique
+  logo        String?
+  description String?
+
+  ownerId String
+  owner User @relation("WorkspaceOwner", fields: [ownerId], references: [id], onDelete: Cascade)
 
   memberships WorkspaceMember[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@map("workspace")
 }
